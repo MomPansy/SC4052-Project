@@ -1,5 +1,5 @@
 CREATE TABLE "user_roles" (
-	"user_id" text NOT NULL,
+	"user_id" uuid NOT NULL,
 	"created_at" timestamp (3) with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp (3) with time zone DEFAULT now() NOT NULL,
 	"archived_at" timestamp (3) with time zone,
@@ -7,7 +7,7 @@ CREATE TABLE "user_roles" (
 );
 
 CREATE TABLE "users" (
-	"id" text PRIMARY KEY DEFAULT nanoid() NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"auth_user_id" uuid NOT NULL,
 	"workspace_id" text NOT NULL,
 	"created_at" timestamp (3) with time zone DEFAULT now() NOT NULL,

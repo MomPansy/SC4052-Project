@@ -2,16 +2,14 @@ import { sql, relations } from "drizzle-orm";
 import {
   pgTable,
   timestamp,
-  foreignKey,
   text,
   uuid,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
-  id: text("id")
+  id: uuid("id")
     .primaryKey()
-    .notNull()
-    .default(sql`nanoid()`),
+    .notNull(),
   authUserId: uuid("auth_user_id").notNull(),
   workspaceId: text("workspace_id").notNull(),
   createdAt: timestamp("created_at", { precision: 3, withTimezone: true })
