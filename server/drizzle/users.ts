@@ -1,4 +1,4 @@
-import { sql, relations } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   timestamp,
@@ -9,7 +9,8 @@ import {
 export const users = pgTable("users", {
   id: uuid("id")
     .primaryKey()
-    .notNull(),
+    .notNull()
+    .default(sql`gen_random_uuid()`),
   authUserId: uuid("auth_user_id").notNull(),
   workspaceId: text("workspace_id").notNull(),
   createdAt: timestamp("created_at", { precision: 3, withTimezone: true })
@@ -25,5 +26,3 @@ export const users = pgTable("users", {
   phone: text("phone"),
   avatarUrl: text("avatar_url"),
 });
-
-export const userRelations = relations(users, ({ one, many }) => ({}));

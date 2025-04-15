@@ -1,7 +1,13 @@
+import { useChat } from '@ai-sdk/react';
 import { Avatar, Card, Group } from '@mantine/core';
 import { IconUser } from '@tabler/icons-react';
+import { UIMessage } from 'ai';
 
-export function MessageUser() {
+interface Props {
+  message: UIMessage
+}
+
+export function MessageUser({ message }: Props) {
   return (
     <Group pos="relative" align="flex-start">
       <Avatar color="green" className="sticky top-[60px]">
@@ -12,7 +18,7 @@ export function MessageUser() {
         radius="lg"
         className="w-full flex-1 whitespace-pre-wrap p-xs"
       >
-        User Message
+        {message.content}
       </Card>
     </Group>
   );

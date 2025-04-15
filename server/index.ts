@@ -1,9 +1,16 @@
 import { serveStatic } from "@hono/node-server/serve-static";
 import { serve } from "@hono/node-server";
 import { factory } from "./factory.ts";
-import { route as exampleRoute } from "./routes/example.ts";
+import { route as chatRoute } from "./routes/chat.ts";
+import { cors } from 'hono/cors'
 
 const app = factory.createApp();
+
+app.use('/api/*', cors({
+  origin: '*', // Allow all origins
+  allowMethods: ['GET', 'POST', 'OPTIONS'], // Allow specific HTTP methods
+  allowHeaders: ['Authorization', 'Content-Type'], // Allow specific headers
+}))
 
 app.get('/healthz', (c) => {
   return c.json({ message: 'Ok' });
@@ -11,7 +18,7 @@ app.get('/healthz', (c) => {
 
 export const apiRoutes = app
   .basePath('/api')
-  .route('/example', exampleRoute)
+  .route('/chat', chatRoute)
 
 export type ApiRoutes = typeof apiRoutes;
 
@@ -20,7 +27,6 @@ app
   .get('/*', serveStatic({ path: './dist/static/index.html' }));
 
 (async () => {
-
   const port = 3000;
   serve({ fetch: app.fetch, port }, () => {
     // eslint-disable-next-line no-console

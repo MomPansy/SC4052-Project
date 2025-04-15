@@ -1,0 +1,34 @@
+.message-markdown {
+  svg {
+    display: inline;
+  }
+
+  li {
+    list-style: initial;
+  }
+
+  section[data-footnotes="true"] {
+    margin-top: var(--mantine-spacing-sm);
+
+    ol {
+      margin-top: var(--mantine-spacing-md);
+      margin-bottom: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--mantine-spacing-xs);
+
+      @media (max-width: --mantine-breakpoint-lg) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (max-width: --mantine-breakpoint-sm) {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

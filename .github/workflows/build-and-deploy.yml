@@ -36,10 +36,10 @@ jobs:
         if: env.no_changes == 'false'
         run: |
           TAG=${GITHUB_SHA::7}
-          docker build -t mompansy/home-ordering-node:$TAG .
-          docker tag mompansy/home-ordering-node:$TAG mompansy/home-ordering-node:latest
-          docker push mompansy/home-ordering-node:$TAG
-          docker push mompansy/home-ordering-node:latest
+          docker build -t mompansy/project-chatbot:$TAG .
+          docker tag mompansy/project-chatbot:$TAG mompansy/project-chatbot:latest
+          docker push mompansy/project-chatbot:$TAG
+          docker push mompansy/project-chatbot:latest
 
       # Step 5: Commit and Push Changes
       - name: Commit and Push Changes
