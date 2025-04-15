@@ -10,7 +10,9 @@ import {
     ButtonProps,
     Stack,
     Tabs,
-    FloatingIndicator
+    FloatingIndicator,
+    Container,
+    Anchor
 } from '@mantine/core';
 import classes from './login.module.css';
 
@@ -139,12 +141,18 @@ export function Login() {
     });
 
     return (
-        <div className={classes.wrapper}>
-            <Paper className={classes.form} radius={0} p={30}>
-                <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
-                    Welcome back to [INSERT APP NAME]!
-                </Title>
+        <Container size={420} my={120}>
+            <Title order={2} className={classes.title} ta="center" mb={20}>
+                Welcome back!
+            </Title>
+            <Text c="dimmed" size="sm" ta="center" >
+                Do not have an account yet?{' '}
+                <Link to="/register" className="text-hf-blue hover:text-blue-700 font-bold">
+                    Register
+                </Link>
+            </Text>
 
+            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
                 <Tabs value={activeTab} onChange={setActiveTab} variant="none" className={classes.list}
                 >
                     <Tabs.List ref={rootRef} mb="md">
@@ -237,15 +245,8 @@ export function Login() {
                         Login With Google
                     </GoogleButton>
                 </Stack>
-
-                <Text ta="center" mt="md">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="text-hf-blue hover:text-blue-700 font-bold">
-                        Register
-                    </Link>
-                </Text>
             </Paper>
-        </div>
+        </Container>
     );
 }
 
