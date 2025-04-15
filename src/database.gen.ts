@@ -1,12 +1,3 @@
-
-> mono-repo-node-template@0.0.0 envx:run C:\Users\jayde\Coding\school-projects\SC4052\project
-> pnpm envx run --env-file .env.vite --env-file .env.production --overload "--" "pnpm" "supabase" "gen" "types" "typescript" "--project-id" "hjgwhnyfxjgknavmpiex" "-s" "public,storage"
-
-
-> mono-repo-node-template@0.0.0 envx C:\Users\jayde\Coding\school-projects\SC4052\project
-> dotenvx "run" "--env-file" ".env.vite" "--env-file" ".env.production" "--overload" "--" "pnpm" "supabase" "gen" "types" "typescript" "--project-id" "hjgwhnyfxjgknavmpiex" "-s" "public,storage"
-
-[38;5;142m[dotenvx@1.40.0] injecting env (10) from .env.vite, .env.production[39m
 export type Json =
   | string
   | number

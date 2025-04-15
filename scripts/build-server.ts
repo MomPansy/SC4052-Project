@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, cp } from 'node:fs/promises';
 import path from 'node:path';
 import { build } from 'esbuild';
 
 (async () => {
   await build({
-    entryPoints: ['server/index.ts', 'server/**/*.*'],
+    entryPoints: ['server/index.ts', 'server/**/*.ts', 'server/**/*.js', 'server/**/*.json'],
     tsconfig: 'tsconfig.json',
     format: 'esm',
     platform: 'node',
@@ -85,6 +85,16 @@ import { build } from 'esbuild';
       },
     ],
   });
+  try {
+    await cp(
+      path.join(process.cwd(), 'server', 'drizzle', 'migrations'),
+      path.join(process.cwd(), 'dist', 'drizzle', 'migrations'),
+      { recursive: true }
+    );
+    console.log('SQL migration files copied successfully');
+  } catch (error) {
+    console.error('Error copying SQL migration files:', error);
+  }
 })().catch((error: unknown) => {
   console.error(error);
   process.exit(1);
