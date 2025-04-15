@@ -2,7 +2,7 @@ import { factory } from "../factory.js";
 import { MessageSchema } from "../zod/chat.js";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { drizzle } from "../middlewares/drizzle";
+import { drizzle } from "../middlewares/drizzle.js";
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 const ChatRequestSchema = z.object({

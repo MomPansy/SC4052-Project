@@ -3,7 +3,7 @@ import { auth } from "server/middlewares/auth.ts";
 import { MessageSchema } from "server/zod/chat.ts";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { drizzle } from "server/middlewares/drizzle";
+import { drizzle } from "server/middlewares/drizzle.ts";
 import { streamText, createDataStream, createDataStreamResponse } from "ai";
 import { openai } from "@ai-sdk/openai";
 
