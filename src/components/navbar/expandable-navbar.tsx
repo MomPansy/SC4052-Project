@@ -17,7 +17,7 @@ export function Sidebar() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('chats')
-                .select('id')
+                .select('id, title')
                 .order('created_at', { ascending: false });
             if (error) {
                 throw new Error(error.message);
@@ -26,7 +26,7 @@ export function Sidebar() {
         }
     })
 
-    const links = data?.map((item) => <LinksGroup key={item.id} link='/chat/$id' params={item.id} title={'testing title'} />);
+    const links = data?.map((item) => <LinksGroup key={item.id} link='/chat/$id' params={{id: item.id,}} title={item.title ?? 'This title is broken'} />);
 
     return (
         <>
@@ -43,7 +43,7 @@ export function Sidebar() {
                 styles={{
                     header: {
                         display: 'none',
-                    }, 
+                    },
                 }}
                 shadow={'xs'}
             >
@@ -81,7 +81,7 @@ export function Sidebar() {
                 variant='subtle'
                 onClick={open}
             >
-                <IconLayoutSidebar size={30} color={'black'}/>
+                <IconLayoutSidebar size={30} color={'black'} />
             </ActionIcon>
         </>
     );
