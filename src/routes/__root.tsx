@@ -3,9 +3,10 @@ import { useEffect } from 'react';
 import { Button, Center, Stack, Text, Title } from '@mantine/core';
 import { type QueryClient } from '@tanstack/react-query';
 
-import { createRootRouteWithContext, Link, Outlet, useNavigate } from '@tanstack/react-router'
+import { createRootRouteWithContext, Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Sidebar } from 'components/navbar/expandable-navbar';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -15,9 +16,14 @@ export const Route = createRootRouteWithContext<{
 });
 
 function Component() {
+  const router = useRouterState();
   return (
     <>
-      <hr />
+      <hr />{
+        !(router.location.pathname === '/login' || router.location.pathname === '/register') && (
+          <Sidebar />
+        )
+      }
       <Outlet />
       {import.meta.env.DEV && (
         <>

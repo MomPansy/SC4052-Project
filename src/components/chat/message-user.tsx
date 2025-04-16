@@ -10,9 +10,6 @@ interface Props {
 export function MessageUser({ message }: Props) {
   return (
     <Group pos="relative" align="flex-start">
-      <Avatar color="green" className="sticky top-[60px]">
-        <IconUser stroke={1.75} />
-      </Avatar>
       <Card
         withBorder
         radius="lg"
@@ -20,6 +17,9 @@ export function MessageUser({ message }: Props) {
       >
         {message.content}
       </Card>
+      <Avatar color="green" className="sticky top-[60px]">
+        <IconUser stroke={1.75} />
+      </Avatar>
     </Group>
   );
 }

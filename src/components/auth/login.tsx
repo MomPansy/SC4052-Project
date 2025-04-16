@@ -240,11 +240,11 @@ export function Login() {
                     </Tabs.Panel>
                 </Tabs>
 
-                <Stack mt={'xl'}>
+                {/* <Stack mt={'xl'}>
                     <GoogleButton fullWidth size="md" onClick={() => { thirdPartyMutation.mutate() }} loading={thirdPartyMutation.isPending}>
                         Login With Google
                     </GoogleButton>
-                </Stack>
+                </Stack> */}
             </Paper>
         </Container>
     );

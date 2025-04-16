@@ -9,7 +9,7 @@ const app = factory.createApp();
 app.use('/api/*', cors({
   origin: '*', // Allow all origins
   allowMethods: ['GET', 'POST', 'OPTIONS'], // Allow specific HTTP methods
-  allowHeaders: ['Authorization', 'Content-Type'], // Allow specific headers
+  allowHeaders: ['Authorization', 'Content-Type', 'apikey'], // Allow specific headers
 }))
 
 app.get('/healthz', (c) => {

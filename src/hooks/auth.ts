@@ -2,6 +2,7 @@ import {
   useMutation,
   queryOptions,
   useSuspenseQuery,
+  useQuery,
 } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 import { type JwtPayload } from "server/zod/jwt.ts";
@@ -75,4 +76,20 @@ export function useSignInWithOTP() {
       showError(error.message);
     },
   });
+}
+
+export function useGetAuth() {
+  return useQuery({
+    queryKey: ["auth", "session"],
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        throw error;
+      }
+      return {
+        session: data.session,
+        user: data.session?.user,
+      };
+    },
+  })
 }

@@ -11,8 +11,8 @@ export const users = pgTable("users", {
     .primaryKey()
     .notNull()
     .default(sql`gen_random_uuid()`),
-  authUserId: uuid("auth_user_id").notNull(),
-  workspaceId: text("workspace_id").notNull(),
+  authUserId: uuid("auth_user_id"),
+  workspaceId: text("workspace_id"),
   createdAt: timestamp("created_at", { precision: 3, withTimezone: true })
     .defaultNow()
     .notNull(),

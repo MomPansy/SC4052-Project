@@ -33,7 +33,7 @@ export const messages = pgTable(
     archivedAt: timestamp("archived_at", { precision: 3, withTimezone: true }),
     position: integer("position").notNull(),
     role: text("role").notNull().$type<Message["role"]>(),
-    content: text("content").notNull(),
+    content: text("content"),
     parts: jsonb("parts").array().$type<Message["parts"][]>(),
     toolInvocations: jsonb("tool_invocations")
       .array()
