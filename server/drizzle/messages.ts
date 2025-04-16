@@ -52,6 +52,11 @@ export const messages = pgTable(
       foreignColumns: [users.id],
       name: "messages_user_id_fk",
     }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.chatId],
+      foreignColumns: [chats.id],
+      name: "messages_chat_id_fk",
+    }).onDelete("cascade"),
   ]
 );
 

@@ -15,6 +15,20 @@
       "when": 1744644207689,
       "tag": "0001_happy_black_queen",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744796237143,
+      "tag": "0002_secret_madelyne_pryor",
+      "breakpoints": false
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744796340726,
+      "tag": "0003_faithful_sauron",
+      "breakpoints": false
     }
   ]
 }
