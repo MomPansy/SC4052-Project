@@ -8,7 +8,7 @@
     "jsxImportSource": "hono/jsx",
     "lib": ["ESNext"],
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "noEmit": true,
     "outDir": "dist",
     "paths": {
@@ -18,7 +18,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types": ["node"]
+    "types": ["node"],
   },
   "include": ["scripts/**/*.ts", "server/**/*.ts", "*.ts"]
 }

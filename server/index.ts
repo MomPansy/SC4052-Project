@@ -3,14 +3,18 @@ import { serve } from "@hono/node-server";
 import { factory } from "./factory.ts";
 import { route as chatRoute } from "./routes/chat.ts";
 import { cors } from 'hono/cors'
+import { spawn } from "threads"
 
 const app = factory.createApp();
+
+export const dbWorker = spawn(new Worker('./workers/db', { type: "module" }))
 
 app.use('/api/*', cors({
   origin: '*', // Allow all origins
   allowMethods: ['GET', 'POST', 'OPTIONS'], // Allow specific HTTP methods
   allowHeaders: ['Authorization', 'Content-Type', 'apikey'], // Allow specific headers
 }))
+
 
 app.get('/healthz', (c) => {
   return c.json({ message: 'Ok' });

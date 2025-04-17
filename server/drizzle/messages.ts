@@ -1,4 +1,4 @@
-import { type Message, type ToolInvocation, type JSONValue } from "ai";
+import { type CoreMessage, type UserContent, type AssistantContent, type ToolContent } from "ai";
 import { sql, relations } from "drizzle-orm";
 import {
   pgTable,
@@ -32,13 +32,11 @@ export const messages = pgTable(
       .$onUpdate(() => new Date()),
     archivedAt: timestamp("archived_at", { precision: 3, withTimezone: true }),
     position: integer("position").notNull(),
-    role: text("role").notNull().$type<Message["role"]>(),
+    role: text("role").notNull().$type<CoreMessage["role"]>(),
     content: text("content"),
-    parts: jsonb("parts").array().$type<Message["parts"][]>(),
-    toolInvocations: jsonb("tool_invocations")
-      .array()
-      .$type<ToolInvocation[]>(),
-    annotations: jsonb("annotations").array().$type<JSONValue[]>(),
+    userContent: jsonb("user_content").$type<UserContent>(),
+    assistantContent: jsonb("assistant_content").$type<AssistantContent>(),
+    toolContent: jsonb("tool_content").$type<ToolContent>(),
     reaction: text("reaction").$type<"up" | "down">(),
   },
   (table) => [
