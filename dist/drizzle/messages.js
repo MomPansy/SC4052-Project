@@ -22,10 +22,10 @@ const messages = pgTable(
     archivedAt: timestamp("archived_at", { precision: 3, withTimezone: true }),
     position: integer("position").notNull(),
     role: text("role").notNull().$type(),
-    content: text("content").notNull(),
-    parts: jsonb("parts").array().$type(),
-    toolInvocations: jsonb("tool_invocations").array().$type(),
-    annotations: jsonb("annotations").array().$type(),
+    content: text("content"),
+    userContent: jsonb("user_content").$type(),
+    assistantContent: jsonb("assistant_content").$type(),
+    toolContent: jsonb("tool_content").$type(),
     reaction: text("reaction").$type()
   },
   (table) => [
@@ -38,6 +38,11 @@ const messages = pgTable(
       columns: [table.userId],
       foreignColumns: [users.id],
       name: "messages_user_id_fk"
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.chatId],
+      foreignColumns: [chats.id],
+      name: "messages_chat_id_fk"
     }).onDelete("cascade")
   ]
 );

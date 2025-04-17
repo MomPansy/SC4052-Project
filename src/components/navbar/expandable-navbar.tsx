@@ -7,11 +7,12 @@ import classes from './expandable-navbar.module.css';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from 'lib/supabase.ts';
 import { useDisclosure } from '@mantine/hooks';
-import { IconLayoutSidebar, IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
+import { IconLayoutSidebar, IconLayoutSidebarRightCollapse, IconTextPlus } from '@tabler/icons-react';
+import { useNavigate } from '@tanstack/react-router';
 
 export function Sidebar() {
     const [opened, { open, close }] = useDisclosure(true);
-
+    const navigate = useNavigate();
     const { data, error, isLoading } = useQuery({
         queryKey: ['chatIds'],
         queryFn: async () => {
@@ -26,7 +27,7 @@ export function Sidebar() {
         }
     })
 
-    const links = data?.map((item) => <LinksGroup key={item.id} link='/chat/$id' params={{id: item.id,}} title={item.title ?? 'This title is broken'} />);
+    const links = data?.map((item) => <LinksGroup key={item.id} link='/chat/$id' params={{ id: item.id, }} title={item.title ?? 'This title is broken'} />);
 
     return (
         <>
@@ -46,6 +47,7 @@ export function Sidebar() {
                     },
                 }}
                 shadow={'xs'}
+                lockScroll={false}
             >
                 <nav className={classes.navbar}>
                     <div className={classes.header}>
@@ -53,6 +55,15 @@ export function Sidebar() {
                             <ActionIcon
                                 variant='subtle'>
                                 <IconLayoutSidebarRightCollapse size={30} color={'black'} onClick={close} />
+                            </ActionIcon>
+                            <ActionIcon
+                                variant='subtle'
+                                >
+                                <IconTextPlus size={30} color={'black'} onClick={() => {
+                                    navigate({
+                                        to: '/'
+                                    })
+                                }} />
                             </ActionIcon>
                             <Group flex={1} >
                                 <Logo style={{ width: 120 }} />

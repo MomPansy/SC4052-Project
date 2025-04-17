@@ -7,8 +7,8 @@ import {
 } from "drizzle-orm/pg-core";
 const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().default(sql`gen_random_uuid()`),
-  authUserId: uuid("auth_user_id").notNull(),
-  workspaceId: text("workspace_id").notNull(),
+  authUserId: uuid("auth_user_id"),
+  workspaceId: text("workspace_id"),
   createdAt: timestamp("created_at", { precision: 3, withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { precision: 3, withTimezone: true }).defaultNow().notNull().$onUpdate(() => /* @__PURE__ */ new Date()),
   archivedAt: timestamp("archived_at", { precision: 3, withTimezone: true }),

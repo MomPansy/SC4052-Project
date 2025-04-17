@@ -22,7 +22,7 @@ export function LinksGroup({ title, params, initiallyOpened, link }: LinksGroupP
           params={params}
           className={classes.link} 
         >
-          { title}
+          {title}
         </Link>
       </UnstyledButton>
     </>

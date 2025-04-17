@@ -6,16 +6,90 @@ import { drizzle } from "server/middlewares/drizzle.ts";
 import {
   streamText,
   coreMessageSchema,
-  coreAssistantMessageSchema,
-  coreSystemMessageSchema,
-  coreToolMessageSchema,
   coreUserMessageSchema,
-  createDataStreamResponse,
+  generateText,
+  CoreUserMessage,
+  CoreAssistantMessage,
 } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { type Message } from "@ai-sdk/ui-utils";
 import { chats } from "server/drizzle/chats";
 import { messages as messagesTable } from "server/drizzle/messages.ts";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
+import { type Tx } from "server/lib/db.ts";
+
+async function insertUserMessage({
+  tx,
+  chatId,
+  userId,
+  message,
+  position,
+}: {
+  tx: Tx;
+  chatId: string;
+  userId: string;
+  message: CoreUserMessage;
+  position: number;
+}) {
+  const [chat] = await tx
+    .selectDistinct({
+      id: chats.id,
+    })
+    .from(chats)
+    .where(and(eq(chats.id, chatId), eq(chats.userId, userId)));
+
+  if (!chat) {
+    const { text } = await generateText({
+      prompt: "Generate a title for the chat" + message.content,
+      model: openai("gpt-4o"),
+    });
+
+    await tx.insert(chats).values({
+      id: chatId,
+      userId: userId,
+      title: text,
+    });
+  } else {
+    // if chat exists in the database, insert the message
+    await tx.insert(messagesTable).values({
+      chatId: chatId,
+      userId: userId,
+      role: message.role,
+      content:
+        typeof message.content === "string" ? message.content : undefined,
+      position: position,
+    });
+  }
+}
+
+async function insertAssistantMessage({
+  tx,
+  chatId,
+  userId,
+  message,
+  position,
+  text,
+}: {
+  tx: Tx;
+  chatId: string;
+  userId: string;
+  text: string;
+  message?: CoreAssistantMessage;
+  position: number;
+}) {
+  await tx.insert(messagesTable).values({
+    chatId: chatId,
+    userId: userId,
+    role: "assistant",
+    content:
+      text ||
+      (message && typeof message.content === "string"
+        ? message.content
+        : undefined),
+    assistantContent: message && message.content,
+    position: position,
+  });
+}
 
 export const route = factory
   .createApp()
@@ -30,11 +104,11 @@ export const route = factory
         messages: z.array(coreMessageSchema),
       })
     ),
-    drizzle({ lazy: true }),
+    drizzle(),
     async (c) => {
       // Step 1: Extract and validate request data
       const { id: chatId, messages, userId } = c.req.valid("json");
-      const { withTx } = c.var;
+      const { tx } = c.var;
 
       const lastMessageIndex = messages.length - 1;
       // Check if last message is from user or assistant
@@ -42,102 +116,78 @@ export const route = factory
         messages[lastMessageIndex]
       );
 
-      return createDataStreamResponse({
-        execute: async (dataStream) => {
-          // Step 2: Initialize data stream
-          dataStream.writeData("initialized call");
-          console.log("Initialized call");
-          await withTx(async (tx) => {
-            // Step 3: Check if chat exists
-            const [chat] = await tx
-              .selectDistinct({
-                id: chats.id,
-              })
-              .from(chats)
-              .where(and(eq(chats.id, chatId), eq(chats.userId, userId)));
+      // insert user message into database
+      await insertUserMessage({
+        tx,
+        chatId,
+        userId,
+        message: lastMessage,
+        position: lastMessageIndex,
+      });
 
-            console.log("Chat found:", chat); 
-            
-            if (!chat) {
-              console.log("Chat not found, creating new chat");
-              // Step 3a: If chat doesn't exist, create a new chat with generated title
-              const text = await streamText({
-                model: openai("gpt-4o"),
-                prompt: `Create a title for the following chat: ${messages[0].content}`,
-                onFinish: async (result) => {
-                  // Step 3b: Save the new chat to database
-                  const [chat] = await tx
-                    .insert(chats)
-                    .values({
-                      id: chatId,
-                      userId: userId,
-                      title: result.text,
-                    })
-                    .returning({ id: chats.id });
-
-                  dataStream.writeMessageAnnotation({
-                    id: chat.id,
-                    other: "new chat",
-                  });
-                },
-              });
-
-              text.mergeIntoDataStream(dataStream);
-            } 
-
-            console.log("saving user message:", lastMessage.content);
-
-            await tx.insert(messagesTable).values({
-              chatId: chatId,
-              userId: userId,
-              role: lastMessage.role,
-              content:
-                typeof lastMessage.content === "string"
-                  ? lastMessage.content
-                  : undefined,
-              position: lastMessageIndex,
-            });
-            console.log("User message saved:", lastMessage.content);
+      const result = streamText({
+        messages: messages,
+        model: openai("gpt-4o"),
+        onFinish: async (result) => {
+          // Insert assistant message into the database
+          await insertAssistantMessage({
+            tx: tx,
+            userId: userId,
+            chatId: chatId,
+            text: result.text,
+            position: lastMessageIndex + 1,
           });
-
-          // Step 5: Generate AI response using the message history
-          console.log("Generating AI response...");
-          const result = streamText({
-            model: openai("gpt-4o"),
-            messages: messages,
-            onFinish: async (result) => {
-              // Step 6: Store the AI response in the database
-              const messageId = await withTx(async (tx) => {
-                const [messageId] = await tx
-                  .insert(messagesTable)
-                  .values({
-                    chatId: chatId,
-                    userId: userId,
-                    role: "assistant",
-                    content:
-                      typeof result.text === "string" ? result.text : undefined,
-                    position: lastMessageIndex + 1,
-                  })
-                  .returning({
-                    id: messagesTable.id,
-                  });
-                return messageId.id;
-              });
-
-              // Step 7: Notify client that assistant message was saved
-              dataStream.writeMessageAnnotation({
-                id: messageId,
-                other: "saved assistant message",
-              });
-            },
-          });
-
-          // Step 8: Stream AI response back to client in real-time
-          result.mergeIntoDataStream(dataStream);
-        },
-        onError: (error) => {
-          return error instanceof Error ? error.message : String(error);
         },
       });
+      return result.toDataStreamResponse();
+    }
+  )
+  .get(
+    "/:chatId/:userId",
+    zValidator(
+      "param",
+      z.object({
+        chatId: z.string(),
+        userId: z.string(),
+      })
+    ),
+    drizzle(),
+    async (c) => {
+      const { chatId, userId } = c.req.valid("param");
+      const { tx } = c.var;
+
+      // Fetch messages from the database
+      const messages = await tx
+        .select({
+          id: messagesTable.id,
+          createdAt: messagesTable.createdAt,
+          role: messagesTable.role,
+          content: messagesTable.content,
+          userContent: messagesTable.userContent,
+          assistantContent: messagesTable.assistantContent,
+          toolContent: messagesTable.toolContent,
+        })
+        .from(messagesTable)
+        .where(
+          and(
+            eq(messagesTable.chatId, chatId),
+            eq(messagesTable.userId, userId)
+          )
+        )
+        .orderBy(sql`position asc`);
+
+      // convert to Message
+      const uimessage = messages.map((message) => {
+        const { id, createdAt, role, content } = message;
+        const convertedMessage: Message = {
+          id: id,
+          createdAt: createdAt,
+          content: content ?? "",
+          role: role === "tool" ? "assistant" : role,
+        };
+        return convertedMessage;
+      });
+
+      return c.json(uimessage);
     }
   );

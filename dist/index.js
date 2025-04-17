@@ -9,7 +9,7 @@ app.use("/api/*", cors({
   // Allow all origins
   allowMethods: ["GET", "POST", "OPTIONS"],
   // Allow specific HTTP methods
-  allowHeaders: ["Authorization", "Content-Type"]
+  allowHeaders: ["Authorization", "Content-Type", "apikey"]
   // Allow specific headers
 }));
 app.get("/healthz", (c) => {
