@@ -39,6 +39,7 @@
     "postgres": "^3.4.5",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "threads": "^1.7.0",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "zod": "^3.24.1"
@@ -47,6 +48,7 @@
     "@ai-sdk/provider-utils": "^2.2.7",
     "@ai-sdk/react": "^1.2.9",
     "@ai-sdk/ui-utils": "^1.2.8",
+    "@chialab/esbuild-plugin-worker": "^0.18.1",
     "@devoss/tailwind-plugin-mantine": "^2.1.0",
     "@eslint/js": "^9.11.0",
     "@mantine/core": "^7.12.2",
