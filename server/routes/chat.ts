@@ -13,7 +13,7 @@ import {
 } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { type Message } from "@ai-sdk/ui-utils";
-import { chats } from "server/drizzle/chats";
+import { chats } from "server/drizzle/chats.ts";
 import { messages as messagesTable } from "server/drizzle/messages.ts";
 import { and, eq, sql } from "drizzle-orm";
 import { type Tx } from "server/lib/db.ts";
