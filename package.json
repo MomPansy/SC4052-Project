@@ -19,6 +19,7 @@
     "db:typegen": "pnpm envx:run -- pnpm supabase gen types typescript --project-id hjgwhnyfxjgknavmpiex -s public,storage > src/database.gen.ts",
     "db:mig": "pnpm envx:run -- pnpm drizzle-kit migrate --config=drizzle.config.ts",
     "db:push": "pnpm envx:run -- pnpm drizzle-kit push --config=drizzle.config.ts",
+    "db:gen": "pnpm envx:run -- pnpm drizzle-kit generate --config=drizzle.config.ts",
     "build:docker": " docker build --no-cache -t test ."
   },
   "dependencies": {
